@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # --- TRUCO CSS PARA BOTÓN VERDE ---
-# Esto fuerza a que el botón sea verde
+# Forzamos el color verde en el botón de la barra lateral
 st.markdown(
     """
     <style>
@@ -38,33 +38,33 @@ st.write("Introduce los coeficientes de la ecuación: $y = ax^2 + bx + c$")
 with st.sidebar:
     st.header("⚙️ Parámetros")
     
-    # Inputs
+    # Entradas de datos
     a = st.number_input("Valor de a:", value=0.0, step=0.1, format="%.2f")
     b = st.number_input("Valor de b:", value=0.0, step=0.1, format="%.2f")
     c = st.number_input("Valor de c:", value=0.0, step=0.1, format="%.2f")
     
-    st.write("---") # Separador
+    st.write("---") # Separador visual
     
-    # BOTÓN VERDE (Ahora está aquí abajo, como pediste)
+    # Botón verde de cálculo al final de la columna
     calcular = st.button("Calcular Trayectoria", use_container_width=True)
 
 # --- 4. LÓGICA Y RESULTADOS ---
 if calcular:
     st.divider()
 
-    # Cálculos
+    # Cálculos matemáticos
     delta = b**2 - 4*a*c
     
-    # Variables
+    # Inicialización de variables de clasificación
     tipo = ""
     riesgo = ""
     color_riesgo = ""
     mensaje_corte = ""
 
-    # Lógica
+    # Clasificación de la trayectoria
     if a == 0:
         tipo = "Rectilínea (No balística)"
-        riesgo = "Nulo"
+        riesgo = "Riesgo nulo"
         color_riesgo = "blue"
         mensaje_corte = "No aplica"
     else:
@@ -80,7 +80,7 @@ if calcular:
         else:
             mensaje_corte = "Impacta en el suelo (2 puntos)"
 
-        # Riesgo
+        # Determinación de niveles de riesgo
         if a > 0 and delta < 0:
             riesgo = "Bajo"
             color_riesgo = "green"
@@ -94,7 +94,7 @@ if calcular:
             riesgo = "No clasificado"
             color_riesgo = "gray"
 
-    # Mostrar Alertas
+    # Mostrar avisos visuales según el riesgo
     if color_riesgo == "red":
         st.error(f"🚨 RIESGO: {riesgo}")
     elif color_riesgo == "orange":
@@ -104,14 +104,15 @@ if calcular:
     else:
         st.info(f"ℹ️ RIESGO: {riesgo}")
 
-    # Métricas
+    # Métricas principales
     col1, col2 = st.columns(2)
     col1.metric("Trayectoria", tipo.split("(")[0])
     col2.metric("Discriminante", f"{delta:.2f}")
 
-    # --- 5. GRÁFICA ---
-    st.subheader("Gráfica")
+    # --- 5. VISUALIZACIÓN GRÁFICA ---
+    st.subheader("Gráfica de la función")
     
+    # Lógica para centrar el eje X en el punto de interés
     if a != 0:
         vertice_x = -b / (2*a)
         span = max(abs(vertice_x)*1.5, 10)
@@ -134,6 +135,3 @@ if calcular:
     
     st.pyplot(fig, use_container_width=True)
 
-elif not calcular:
-    # Mensaje inicial
-    st.info("👈 Introduce los datos en la barra lateral y pulsa el botón verde.")
