@@ -9,23 +9,46 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- TRUCO CSS PARA BOTÓN VERDE ---
+# Esto fuerza a que el botón sea verde
+st.markdown(
+    """
+    <style>
+    div.stButton > button:first-child {
+        background-color: #28a745;
+        color: white;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+    }
+    div.stButton > button:hover {
+        background-color: #218838;
+        color: white;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- 2. CABECERA ---
 st.title("🚀 Analizador de Trayectorias")
-st.write("Introduce los valores a, b y c en el menú y pulsa el botón.")
+st.write("Introduce los coeficientes de la ecuación: $y = ax^2 + bx + c$")
 
-# --- 3. BARRA LATERAL (Solo para datos) ---
+# --- 3. BARRA LATERAL (DATOS Y BOTÓN) ---
 with st.sidebar:
-    st.header("⚙️ Datos de la Ecuación")
-    # Inputs numéricos
+    st.header("⚙️ Parámetros")
+    
+    # Inputs
     a = st.number_input("Valor de a:", value=0.0, step=0.1, format="%.2f")
     b = st.number_input("Valor de b:", value=0.0, step=0.1, format="%.2f")
     c = st.number_input("Valor de c:", value=0.0, step=0.1, format="%.2f")
+    
+    st.write("---") # Separador
+    
+    # BOTÓN VERDE (Ahora está aquí abajo, como pediste)
+    calcular = st.button("Calcular Trayectoria", use_container_width=True)
 
-# --- 4. BOTÓN (AHORA EN LA PANTALLA PRINCIPAL) ---
-# Lo hemos sacado de la barra lateral para que siempre se vea
-calcular = st.button("Calcular Resultado", type="primary", use_container_width=True)
-
-# --- 5. LÓGICA Y RESULTADOS ---
+# --- 4. LÓGICA Y RESULTADOS ---
 if calcular:
     st.divider()
 
@@ -38,7 +61,7 @@ if calcular:
     color_riesgo = ""
     mensaje_corte = ""
 
-    # Lógica de clasificación
+    # Lógica
     if a == 0:
         tipo = "Rectilínea (No balística)"
         riesgo = "Nulo"
@@ -86,10 +109,9 @@ if calcular:
     col1.metric("Trayectoria", tipo.split("(")[0])
     col2.metric("Discriminante", f"{delta:.2f}")
 
-    # --- 6. GRÁFICA ---
+    # --- 5. GRÁFICA ---
     st.subheader("Gráfica")
     
-    # Eje X inteligente
     if a != 0:
         vertice_x = -b / (2*a)
         span = max(abs(vertice_x)*1.5, 10)
@@ -111,3 +133,7 @@ if calcular:
     ax.legend()
     
     st.pyplot(fig, use_container_width=True)
+
+elif not calcular:
+    # Mensaje inicial
+    st.info("👈 Introduce los datos en la barra lateral y pulsa el botón verde.")
